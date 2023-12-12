@@ -38,6 +38,7 @@ https://ru.m.wikipedia.org/wiki/BMP,
 https://habr.com/ru/articles/102521/, https://en.wikipedia.org/wiki/JPEG#JPEG_compression, https://github.com/ImpulseAdventure/JPEGsnoop
 
 * Распределение:
+
 Либина Яна - логика проекта, имплементация этапа цветовой субдискретизации
 
 Гончаров Михаил - изучение теории jpeg, этап ДКП и квантования
