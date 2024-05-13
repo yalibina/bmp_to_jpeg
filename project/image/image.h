@@ -33,6 +33,9 @@ public:
     void WriteHeader(std::ofstream& fp);
 
     Pixel& At(uint32_t x, uint32_t y);
+    double& AtY(uint32_t x, uint32_t y);
+    double& AtCb(uint32_t x, uint32_t y);
+    double& AtCr(uint32_t x, uint32_t y);
 
     const uint32_t GetImageHeight() const;
     const uint32_t GetImageWidth() const;
@@ -51,8 +54,12 @@ protected:
     int order_ = 1;
 
     std::vector<std::vector<Pixel>> pixel_matrix_;
+    std::vector<std::vector<double>> Y_matrix_;
+    std::vector<std::vector<double>> Cb_matrix_;
+    std::vector<std::vector<double>> Cr_matrix_;
 
     BMPFileHeader bmp_file_header_;
     BMPInfoHeader bmp_info_header_;
+
 };
 

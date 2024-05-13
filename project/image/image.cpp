@@ -8,6 +8,9 @@ void Image::Resize(const uint32_t new_width, const uint32_t new_height) {
     image_height_ = std::min(image_height_, new_height);
 
     pixel_matrix_.resize(image_height_, std::vector<Pixel>(image_width_));
+    Y_matrix_.resize(image_height_, std::vector<double>(image_width_));
+    Cb_matrix_.resize((image_height_ / 2) + (image_height_ % 2), std::vector<double>((image_width_ / 2) + (image_width_ % 2)));
+    Cr_matrix_.resize((image_height_ / 2) + (image_height_ % 2), std::vector<double>((image_width_ / 2) + (image_width_ % 2)));
 }
 
 void Image::ReadHeader(std::ifstream& file_stream) {
@@ -47,6 +50,18 @@ void Image::SetImageSize(uint32_t width, uint32_t height) {
 
 Pixel& Image::At(uint32_t x, uint32_t y) {
     return pixel_matrix_[x][y];
+}
+
+double& Image::AtY(uint32_t x, uint32_t y) {
+    return Y_matrix_[x][y];
+}
+
+double& Image::AtCb(uint32_t x, uint32_t y) {
+    return Cb_matrix_[x][y];
+}
+
+double& Image::AtCr(uint32_t x, uint32_t y) {
+    return Cr_matrix_[x][y];
 }
 
 const uint8_t Image::GetPadding() const {

@@ -49,11 +49,12 @@ Image File::ReadFile(const std::string& filename) {
             double Cb = 128 - 0.168736*image.At(row, j).R - 0.331264*image.At(row, j).G + 0.5*image.At(row, j).B;
             double Cr = 128 + 0.5*image.At(row, j).R - 0.418688*image.At(row, j).G  - 0.081312 *image.At(row, j).B;
             image.At(row, j).Y = Y;
+            image.AtY(row, j) = Y;
             image.At(row, j).Cb = Cb;
             image.At(row, j).Cr = Cr;
         }
         file_stream.seekg(padding, std::ios_base::cur);
     }
-
     return image;
 }
+
