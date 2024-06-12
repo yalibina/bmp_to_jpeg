@@ -31,34 +31,34 @@ Matrix::Matrix(Matrix &&matrix) noexcept: row_size_(matrix.row_size_),
                                           column_size_(matrix.column_size_), matrix_(std::move(matrix.matrix_)) {
 }
 
-Matrix Matrix::operator+(Matrix &matrix) {
+Matrix Matrix::operator+(const Matrix &matrix) const {
     if (row_size_ != matrix.row_size_ || column_size_ != matrix.column_size_) {
-        throw std::runtime_error("incorrect sizes of matrices for sum");
+        throw std::runtime_error("incorrect sizes of matrices for result");
     }
-    Matrix sum(row_size_, column_size_, 0.0);
+    Matrix result(row_size_, column_size_, 0.0);
     for (size_t i = 0; i < column_size_; ++i) {
         for (size_t j = 0; j < row_size_; ++j) {
-            sum(i, j) = matrix_[i][j] + matrix(i, j);
+            result(i, j) = matrix_[i][j] + matrix(i, j);
         }
     }
-    return sum;
+    return result;
 }
 
-Matrix Matrix::operator-(Matrix &matrix) {
+Matrix Matrix::operator-(const Matrix &matrix) const {
     if (row_size_ != matrix.row_size_ || column_size_ != matrix.column_size_) {
         throw std::runtime_error("incorrect sizes of matrices for subtraction");
     }
-    Matrix diff(row_size_, column_size_, 0.0);
+    Matrix result(row_size_, column_size_, 0.0);
     for (size_t i = 0; i < column_size_; ++i) {
         for (size_t j = 0; j < row_size_; ++j) {
-            diff(i, j) = matrix_[i][j] - matrix(i, j);
+            result(i, j) = matrix_[i][j] - matrix(i, j);
         }
     }
 
-    return diff;
+    return result;
 }
 
-Matrix Matrix::operator*(Matrix &matrix) {
+Matrix Matrix::operator*(const Matrix &matrix) const {
     if (row_size_ != matrix.column_size_) {
         throw std::runtime_error(
                 "Количество столбцов первой матрицы должно совпадать с количеством строк второй матрицы.");
@@ -85,8 +85,8 @@ Matrix &Matrix::operator=(Matrix &&matrix) noexcept {
 
 Matrix Matrix::operator+(double number) {
     Matrix result(row_size_, column_size_, 0.0);
-    for (size_t i = 0; i < column_size_; i++) {
-        for (size_t j = 0; j < row_size_; j++) {
+    for (size_t i = 0; i < column_size_; ++i) {
+        for (size_t j = 0; j < row_size_; ++j) {
             result(i, j) = matrix_[i][j] + number;
         }
     }
@@ -95,8 +95,8 @@ Matrix Matrix::operator+(double number) {
 
 Matrix Matrix::operator-(double number) {
     Matrix result(row_size_, column_size_, 0.0);
-    for (size_t i = 0; i < column_size_; i++) {
-        for (size_t j = 0; j < row_size_; j++) {
+    for (size_t i = 0; i < column_size_; ++i) {
+        for (size_t j = 0; j < row_size_; ++j) {
             result(i, j) = matrix_[i][j] - number;
         }
     }
@@ -105,8 +105,8 @@ Matrix Matrix::operator-(double number) {
 
 Matrix Matrix::operator*(double number) {
     Matrix result(row_size_, column_size_, 0.0);
-    for (size_t i = 0; i < column_size_; i++) {
-        for (size_t j = 0; j < row_size_; j++) {
+    for (size_t i = 0; i < column_size_; ++i) {
+        for (size_t j = 0; j < row_size_; ++j) {
             result(i, j) = matrix_[i][j] * number;
         }
     }
@@ -118,8 +118,8 @@ Matrix Matrix::operator/(double number) {
         throw std::runtime_error("can't divide by zero");
     }
     Matrix result(row_size_, column_size_, 0.0);
-    for (size_t i = 0; i < column_size_; i++) {
-        for (size_t j = 0; j < row_size_; j++) {
+    for (size_t i = 0; i < column_size_; ++i) {
+        for (size_t j = 0; j < row_size_; ++j) {
             result(i, j) = matrix_[i][j] / number;
         }
     }
@@ -128,6 +128,10 @@ Matrix Matrix::operator/(double number) {
 
 
 double &Matrix::operator()(const unsigned &row_index, const unsigned &column_index) {
+    return matrix_[row_index][column_index];
+}
+
+const double &Matrix::operator()(const unsigned &row_index, const unsigned &column_index) const {
     return matrix_[row_index][column_index];
 }
 
@@ -140,18 +144,47 @@ unsigned Matrix::getColumnSize() const {
 }
 
 Matrix Matrix::transpose() {
-    Matrix transposed(column_size_, row_size_, 0.0);
-    for (unsigned i = 0; i < column_size_; i++) {
-        for (unsigned j = 0; j < row_size_; j++) {
-            transposed(j, i) = this->matrix_[i][j];
+    Matrix result(column_size_, row_size_, 0.0);
+    for (unsigned i = 0; i < column_size_; ++i) {
+        for (unsigned j = 0; j < row_size_; ++j) {
+            result(j, i) = this->matrix_[i][j];
         }
     }
-    return transposed;
+    return result;
+}
+
+Matrix Matrix::multiplyByElement(Matrix &matrix) {
+    if (row_size_ != matrix.row_size_ || column_size_ != matrix.column_size_) {
+        throw std::runtime_error("matrices must have equal sizes for multiplication by element");
+    }
+    Matrix res(row_size_, column_size_, 0.0);
+    for (size_t i = 0; i < column_size_; ++i) {
+        for (size_t j = 0; j < row_size_; ++j) {
+            res(i, j) = matrix_[i][j] * matrix(i, j);
+        }
+    }
+    return res;
+}
+
+Matrix Matrix::divideByElement(Matrix &matrix) {
+    if (row_size_ != matrix.row_size_ || column_size_ != matrix.column_size_) {
+        throw std::runtime_error("matrices must have equal sizes for division by element");
+    }
+    Matrix res(row_size_, column_size_, 0.0);
+    for (size_t i = 0; i < column_size_; ++i) {
+        for (size_t j = 0; j < row_size_; ++j) {
+            if (matrix(i, j) == 0) {
+                throw std::runtime_error("matrix divider mustn't contain zeros");
+            }
+            res(i, j) = matrix_[i][j] / matrix(i, j);
+        }
+    }
+    return res;
 }
 
 void Matrix::print() const {
-    for (unsigned i = 0; i < column_size_; i++) {
-        for (unsigned j = 0; j < row_size_; j++) {
+    for (unsigned i = 0; i < column_size_; ++i) {
+        for (unsigned j = 0; j < row_size_; ++j) {
             std::cout << "[" << matrix_[i][j] << "] ";
         }
         std::cout << std::endl;

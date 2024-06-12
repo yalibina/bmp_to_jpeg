@@ -25,17 +25,22 @@ public:
     ~Matrix() = default;
 
     // Matrix Operations
-    Matrix operator+(Matrix &matrix);
+    Matrix operator+(const Matrix &matrix) const;
 
-    Matrix operator-(Matrix &matrix);
+    Matrix operator-(const Matrix &matrix) const;
 
-    Matrix operator*(Matrix &matrix);
+    Matrix operator*(const Matrix &matrix) const;
 
     Matrix &operator=(const Matrix &matrix) = default;
 
     Matrix &operator=(Matrix &&matrix) noexcept;
 
     Matrix transpose();
+
+
+    Matrix multiplyByElement(Matrix &matrix);
+
+    Matrix divideByElement(Matrix &matrix);
 
     // Scalar Operations
     Matrix operator+(double number);
@@ -48,6 +53,9 @@ public:
 
     // Aesthetic Methods
     double &operator()(const unsigned &row_index, const unsigned &column_index);
+
+    const double &operator()(const unsigned &row_index, const unsigned &column_index) const;
+
 
     void print() const;
 
