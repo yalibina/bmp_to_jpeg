@@ -47,7 +47,7 @@ public:
     Matrix operator/(double number);
 
     // Aesthetic Methods
-    double &operator()(const unsigned &, const unsigned &);
+    double &operator()(const unsigned &row_index, const unsigned &column_index);
 
     void print() const;
 
