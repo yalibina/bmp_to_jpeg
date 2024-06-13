@@ -163,7 +163,8 @@ Matrix Matrix::getSlice(std::pair<size_t, size_t> upper_left_point, std::pair<si
     lower_right_point.first = std::min(lower_right_point.first, column_size_ - 1);
     lower_right_point.second = std::min(lower_right_point.second, row_size_ - 1);
 
-    Matrix result(lower_right_point.second - upper_left_point.second + 1, lower_right_point.first - upper_left_point.first + 1, 0);
+    Matrix result(lower_right_point.second - upper_left_point.second + 1,
+                  lower_right_point.first - upper_left_point.first + 1, 0);
     for (size_t i = upper_left_point.first; i < lower_right_point.first + 1; ++i) {
         for (size_t j = upper_left_point.second; j < lower_right_point.second + 1; ++j) {
             result(i - upper_left_point.first, j - upper_left_point.second) = matrix_[i][j];
@@ -176,12 +177,24 @@ Matrix &Matrix::insert(std::pair<size_t, size_t> insert_point, const Matrix &mat
     if (insert_point.first >= column_size_ || insert_point.second >= row_size_) {
         throw std::runtime_error("insert_point must be placed in matrix");
     }
-    for (size_t i = insert_point.first; i < std::min(column_size_, insert_point.first + matrix_to_insert.getColumnSize()); ++i) {
-        for (size_t j = insert_point.second; j < std::min(row_size_, insert_point.second + matrix_to_insert.getRowSize()); ++j) {
+    for (size_t i = insert_point.first;
+         i < std::min(column_size_, insert_point.first + matrix_to_insert.getColumnSize()); ++i) {
+        for (size_t j = insert_point.second;
+             j < std::min(row_size_, insert_point.second + matrix_to_insert.getRowSize()); ++j) {
             matrix_[i][j] = matrix_to_insert(i - insert_point.first, j - insert_point.second);
         }
     }
     return *this;
+}
+
+Matrix Matrix::flatten() const {
+    Matrix result(row_size_ * column_size_, 1, 0);
+    for (size_t i = 0; i < column_size_; ++i) {
+        for (size_t j = 0; j < row_size_; ++j) {
+            result(0, i * row_size_ + j) = matrix_[i][j];
+        }
+    }
+    return result;
 }
 
 double &Matrix::operator()(const size_t &row_index, const size_t &column_index) {
@@ -268,5 +281,5 @@ void Matrix::print(int precision) const {
         }
     }
     std::cout << ']' << std::endl;
-    std::cout << std::defaultfloat << std::setprecision((int)previous_precision);
+    std::cout << std::defaultfloat << std::setprecision((int) previous_precision);
 }

@@ -26,7 +26,8 @@ Matrix DCT::applyDiscreteCosineTransform(const Matrix &matrix, size_t size_of_bl
     size_t blocks_in_row = matrix.getRowSize() / size_of_block + (matrix.getRowSize() % size_of_block != 0);
     for (size_t i = 0; i < blocks_in_column; ++i) {
         for (size_t j = 0; j < blocks_in_row; ++j) {
-            Matrix block = matrix.getSlice({i * size_of_block, j * size_of_block}, {(i + 1) * size_of_block, (j + 1) * size_of_block});
+            Matrix block = matrix.getSlice({i * size_of_block, j * size_of_block},
+                                           {(i + 1) * size_of_block, (j + 1) * size_of_block});
             block.resize(size_of_block, size_of_block, 0);
 
             Matrix res_block = DCT_matrix * block * DCT_matrix_transposed;

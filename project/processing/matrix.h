@@ -47,9 +47,12 @@ public:
 
     [[nodiscard]] Matrix resized(size_t new_row_size, size_t new_column_size, double padding_value = 0) const;
 
-    [[nodiscard]] Matrix getSlice(std::pair<size_t, size_t> upper_left_point, std::pair<size_t, size_t> lower_right_point) const;
+    [[nodiscard]] Matrix
+    getSlice(std::pair<size_t, size_t> upper_left_point, std::pair<size_t, size_t> lower_right_point) const;
 
     Matrix &insert(std::pair<size_t, size_t> insert_point, const Matrix &matrix_to_insert);
+
+    Matrix flatten() const;
 
     // Scalar Operations
     Matrix operator+(double number);
