@@ -14,7 +14,7 @@ private:
     size_t column_size_;
     std::vector<std::vector<double> > matrix_;
 public:
-    Matrix(size_t row_size, size_t column_size, double initial_value);
+    Matrix(size_t row_size, size_t column_size, double initial_value = 0);
 
     Matrix(const Matrix &matrix);
 
@@ -43,9 +43,13 @@ public:
 
     [[nodiscard]] Matrix divideByElement(const Matrix &matrix) const;
 
-    Matrix &resize(size_t new_row_size, size_t new_column_size, double padding_value);
+    Matrix &resize(size_t new_row_size, size_t new_column_size, double padding_value = 0);
 
-    [[nodiscard]] Matrix resized(size_t new_row_size, size_t new_column_size, double padding_value) const;
+    [[nodiscard]] Matrix resized(size_t new_row_size, size_t new_column_size, double padding_value = 0) const;
+
+    [[nodiscard]] Matrix getSlice(std::pair<size_t, size_t> upper_left_point, std::pair<size_t, size_t> lower_right_point) const;
+
+    Matrix &insert(std::pair<size_t, size_t> insert_point, const Matrix &matrix_to_insert);
 
     // Scalar Operations
     Matrix operator+(double number);
@@ -61,7 +65,7 @@ public:
 
     const double &operator()(const size_t &row_index, const size_t &column_index) const;
 
-    void print() const;
+    void print(int precision = 6) const;
 
     [[nodiscard]] size_t getRowSize() const;
 

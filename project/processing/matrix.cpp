@@ -139,10 +139,48 @@ Matrix Matrix::resized(size_t new_row_size, size_t new_column_size, double paddi
 }
 
 Matrix &Matrix::resize(size_t new_row_size, size_t new_column_size, double padding_value) {
-    for (std::vector<double> &row: matrix_) {
-        row.resize(new_row_size, padding_value);
+    if (row_size_ != new_row_size) {
+        for (std::vector<double> &row: matrix_) {
+            row.resize(new_row_size, padding_value);
+        }
     }
+
     matrix_.resize(new_column_size, std::vector<double>(new_row_size, padding_value));
+
+    row_size_ = new_row_size;
+    column_size_ = new_column_size;
+
+    return *this;
+}
+
+Matrix Matrix::getSlice(std::pair<size_t, size_t> upper_left_point, std::pair<size_t, size_t> lower_right_point) const {
+    if (upper_left_point.first > lower_right_point.first || upper_left_point.second > lower_right_point.second) {
+        throw std::runtime_error("upper_left_point's i and j must be not bigger than lower_right_point's");
+    }
+    if (upper_left_point.first >= column_size_ || upper_left_point.second >= row_size_) {
+        throw std::runtime_error("upper_left_point must be placed in matrix");
+    }
+    lower_right_point.first = std::min(lower_right_point.first, column_size_ - 1);
+    lower_right_point.second = std::min(lower_right_point.second, row_size_ - 1);
+
+    Matrix result(lower_right_point.second - upper_left_point.second + 1, lower_right_point.first - upper_left_point.first + 1, 0);
+    for (size_t i = upper_left_point.first; i < lower_right_point.first + 1; ++i) {
+        for (size_t j = upper_left_point.second; j < lower_right_point.second + 1; ++j) {
+            result(i - upper_left_point.first, j - upper_left_point.second) = matrix_[i][j];
+        }
+    }
+    return result;
+}
+
+Matrix &Matrix::insert(std::pair<size_t, size_t> insert_point, const Matrix &matrix_to_insert) {
+    if (insert_point.first >= column_size_ || insert_point.second >= row_size_) {
+        throw std::runtime_error("insert_point must be placed in matrix");
+    }
+    for (size_t i = insert_point.first; i < std::min(column_size_, insert_point.first + matrix_to_insert.getColumnSize()); ++i) {
+        for (size_t j = insert_point.second; j < std::min(row_size_, insert_point.second + matrix_to_insert.getRowSize()); ++j) {
+            matrix_[i][j] = matrix_to_insert(i - insert_point.first, j - insert_point.second);
+        }
+    }
     return *this;
 }
 
@@ -206,11 +244,29 @@ Matrix Matrix::divideByElement(const Matrix &matrix) const {
     return res;
 }
 
-void Matrix::print() const {
+void Matrix::print(int precision) const {
+    std::streamsize previous_precision = std::cout.precision();
+    std::cout << std::fixed << std::setprecision(precision);
+    std::cout << '[';
     for (size_t i = 0; i < column_size_; ++i) {
-        for (size_t j = 0; j < row_size_; ++j) {
-            std::cout << "[" << matrix_[i][j] << "] ";
+        if (i != 0) {
+            std::cout << ' ';
         }
-        std::cout << std::endl;
+        std::cout << "[";
+        for (size_t j = 0; j < row_size_; ++j) {
+            if (matrix_[i][j] >= 0) {
+                std::cout << ' ';
+            }
+            std::cout << matrix_[i][j];
+            if (j != row_size_ - 1) {
+                std::cout << ",\t";
+            }
+        }
+        std::cout << " ]";
+        if (i != column_size_ - 1) {
+            std::cout << std::endl;
+        }
     }
+    std::cout << ']' << std::endl;
+    std::cout << std::defaultfloat << std::setprecision((int)previous_precision);
 }
