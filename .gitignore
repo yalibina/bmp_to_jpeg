@@ -4,3 +4,6 @@ project/cmake-build-debug/
 
 .idea/
 
+main.cpp
+
+CMakeLists.txt
