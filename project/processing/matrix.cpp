@@ -1,7 +1,7 @@
 #include "matrix.h"
 
-Matrix::Matrix(unsigned row_size, unsigned column_size, double initial_value) : row_size_(row_size),
-                                                                                column_size_(column_size) {
+Matrix::Matrix(size_t row_size, size_t column_size, double initial_value) : row_size_(row_size),
+                                                                            column_size_(column_size) {
     matrix_.resize(column_size);
     for (std::vector<double> &row: matrix_) {
         row.resize(row_size, initial_value);
@@ -126,34 +126,58 @@ Matrix Matrix::operator/(double number) {
     return result;
 }
 
+Matrix Matrix::resized(size_t new_row_size, size_t new_column_size, double padding_value) const {
+    Matrix result(new_row_size, new_column_size, padding_value);
+    size_t min_row_size = std::min(row_size_, new_row_size);
+    size_t min_column_size = std::min(column_size_, new_column_size);
+    for (size_t i = 0; i < min_column_size; ++i) {
+        for (size_t j = 0; j < min_row_size; ++j) {
+            result(i, j) = matrix_[i][j];
+        }
+    }
+    return result;
+}
 
-double &Matrix::operator()(const unsigned &row_index, const unsigned &column_index) {
+Matrix &Matrix::resize(size_t new_row_size, size_t new_column_size, double padding_value) {
+    for (std::vector<double> &row: matrix_) {
+        row.resize(new_row_size, padding_value);
+    }
+    matrix_.resize(new_column_size, std::vector<double>(new_row_size, padding_value));
+    return *this;
+}
+
+double &Matrix::operator()(const size_t &row_index, const size_t &column_index) {
     return matrix_[row_index][column_index];
 }
 
-const double &Matrix::operator()(const unsigned &row_index, const unsigned &column_index) const {
+const double &Matrix::operator()(const size_t &row_index, const size_t &column_index) const {
     return matrix_[row_index][column_index];
 }
 
-unsigned Matrix::getRowSize() const {
+size_t Matrix::getRowSize() const {
     return row_size_;
 }
 
-unsigned Matrix::getColumnSize() const {
+size_t Matrix::getColumnSize() const {
     return column_size_;
 }
 
-Matrix Matrix::transpose() {
+Matrix Matrix::transposed() const {
     Matrix result(column_size_, row_size_, 0.0);
-    for (unsigned i = 0; i < column_size_; ++i) {
-        for (unsigned j = 0; j < row_size_; ++j) {
+    for (size_t i = 0; i < column_size_; ++i) {
+        for (size_t j = 0; j < row_size_; ++j) {
             result(j, i) = this->matrix_[i][j];
         }
     }
     return result;
 }
 
-Matrix Matrix::multiplyByElement(Matrix &matrix) {
+Matrix &Matrix::transpose() {
+    *this = std::move(this->transposed());
+    return *this;
+}
+
+Matrix Matrix::multiplyByElement(const Matrix &matrix) const {
     if (row_size_ != matrix.row_size_ || column_size_ != matrix.column_size_) {
         throw std::runtime_error("matrices must have equal sizes for multiplication by element");
     }
@@ -166,7 +190,7 @@ Matrix Matrix::multiplyByElement(Matrix &matrix) {
     return res;
 }
 
-Matrix Matrix::divideByElement(Matrix &matrix) {
+Matrix Matrix::divideByElement(const Matrix &matrix) const {
     if (row_size_ != matrix.row_size_ || column_size_ != matrix.column_size_) {
         throw std::runtime_error("matrices must have equal sizes for division by element");
     }
@@ -183,8 +207,8 @@ Matrix Matrix::divideByElement(Matrix &matrix) {
 }
 
 void Matrix::print() const {
-    for (unsigned i = 0; i < column_size_; ++i) {
-        for (unsigned j = 0; j < row_size_; ++j) {
+    for (size_t i = 0; i < column_size_; ++i) {
+        for (size_t j = 0; j < row_size_; ++j) {
             std::cout << "[" << matrix_[i][j] << "] ";
         }
         std::cout << std::endl;

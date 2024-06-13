@@ -10,11 +10,11 @@
 
 class Matrix {
 private:
-    unsigned row_size_;
-    unsigned column_size_;
+    size_t row_size_;
+    size_t column_size_;
     std::vector<std::vector<double> > matrix_;
 public:
-    Matrix(unsigned row_size, unsigned column_size, double initial_value);
+    Matrix(size_t row_size, size_t column_size, double initial_value);
 
     Matrix(const Matrix &matrix);
 
@@ -35,12 +35,17 @@ public:
 
     Matrix &operator=(Matrix &&matrix) noexcept;
 
-    Matrix transpose();
+    Matrix &transpose();
 
+    [[nodiscard]] Matrix transposed() const;
 
-    Matrix multiplyByElement(Matrix &matrix);
+    [[nodiscard]] Matrix multiplyByElement(const Matrix &matrix) const;
 
-    Matrix divideByElement(Matrix &matrix);
+    [[nodiscard]] Matrix divideByElement(const Matrix &matrix) const;
+
+    Matrix &resize(size_t new_row_size, size_t new_column_size, double padding_value);
+
+    [[nodiscard]] Matrix resized(size_t new_row_size, size_t new_column_size, double padding_value) const;
 
     // Scalar Operations
     Matrix operator+(double number);
@@ -52,15 +57,14 @@ public:
     Matrix operator/(double number);
 
     // Aesthetic Methods
-    double &operator()(const unsigned &row_index, const unsigned &column_index);
+    double &operator()(const size_t &row_index, const size_t &column_index);
 
-    const double &operator()(const unsigned &row_index, const unsigned &column_index) const;
-
+    const double &operator()(const size_t &row_index, const size_t &column_index) const;
 
     void print() const;
 
-    [[nodiscard]] unsigned getRowSize() const;
+    [[nodiscard]] size_t getRowSize() const;
 
-    [[nodiscard]] unsigned getColumnSize() const;
+    [[nodiscard]] size_t getColumnSize() const;
 };
 
