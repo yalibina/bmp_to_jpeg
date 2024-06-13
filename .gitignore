@@ -5,5 +5,3 @@ project/cmake-build-debug/
 .idea/
 
 project/main.cpp
- 
-project/CMakeLists.txt
