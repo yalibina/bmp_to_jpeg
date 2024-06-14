@@ -197,6 +197,16 @@ Matrix Matrix::flatten() const {
     return result;
 }
 
+std::vector<double> Matrix::flatten_vector() const {
+    std::vector<double> result;
+    for (size_t i = 0; i < column_size_; ++i) {
+        for (size_t j = 0; j < row_size_; ++j) {
+            result.push_back(matrix_[i][j]);
+        }
+    }
+    return result;
+}
+
 double &Matrix::operator()(const size_t &row_index, const size_t &column_index) {
     return matrix_[row_index][column_index];
 }

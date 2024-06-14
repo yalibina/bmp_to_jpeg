@@ -52,7 +52,9 @@ public:
 
     Matrix &insert(std::pair<size_t, size_t> insert_point, const Matrix &matrix_to_insert);
 
-    Matrix flatten() const;
+    [[nodiscard]] Matrix flatten() const;
+
+    [[nodiscard]] std::vector<double> flatten_vector() const;
 
     // Scalar Operations
     Matrix operator+(double number);
