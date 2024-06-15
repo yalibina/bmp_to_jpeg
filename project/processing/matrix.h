@@ -39,6 +39,8 @@ public:
 
     Matrix &transpose();
 
+    Matrix &round();
+
     [[nodiscard]] Matrix transposed() const;
 
     [[nodiscard]] Matrix multiplyByElement(const Matrix &matrix) const;

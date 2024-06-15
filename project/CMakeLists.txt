@@ -10,4 +10,5 @@ add_executable(project
         processing/file_process.cpp
         processing/subsample.cpp
         processing/matrix.tpp
-        processing/discrete_cosine_transform.cpp)
+        processing/discrete_cosine_transform.cpp
+        processing/quantization.cpp)

@@ -265,6 +265,18 @@ Matrix<T> &Matrix<T>::transpose() {
 }
 
 template<typename T>
+Matrix<T> &Matrix<T>::round() {
+    Matrix result(column_size_, row_size_, T());
+    for (size_t i = 0; i < column_size_; ++i) {
+        for (size_t j = 0; j < row_size_; ++j) {
+            result(i, j) = round(this->matrix_[i][j]);
+        }
+    }
+    *this = std::move(result);
+    return *this;
+}
+
+template<typename T>
 Matrix<T> Matrix<T>::multiplyByElement(const Matrix<T> &matrix) const {
     if (row_size_ != matrix.row_size_ || column_size_ != matrix.column_size_) {
         throw std::runtime_error("matrices must have equal sizes for multiplication by element");
