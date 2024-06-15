@@ -266,10 +266,10 @@ Matrix<T> &Matrix<T>::transpose() {
 
 template<typename T>
 Matrix<T> &Matrix<T>::round() {
-    Matrix result(column_size_, row_size_, T());
-    for (size_t i = 0; i < column_size_; ++i) {
-        for (size_t j = 0; j < row_size_; ++j) {
-            result(i, j) = round(this->matrix_[i][j]);
+    Matrix result(row_size_, column_size_, T());
+    for (size_t i = 0; i < row_size_; ++i) {
+        for (size_t j = 0; j < column_size_; ++j) {
+            result(i, j) = std::round(this->matrix_[i][j]);
         }
     }
     *this = std::move(result);
