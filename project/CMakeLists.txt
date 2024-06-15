@@ -9,5 +9,5 @@ add_executable(project
         image/pixel.cpp
         processing/file_process.cpp
         processing/subsample.cpp
-        processing/matrix.cpp
+        processing/matrix.tpp
         processing/discrete_cosine_transform.cpp)

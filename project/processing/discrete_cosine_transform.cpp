@@ -2,8 +2,8 @@
 
 # define PI 3.14159265358979323846
 
-Matrix DCT::getDctMatrix(size_t N) {
-    Matrix result(N, N, 0);
+Matrix<double> DCT::getDctMatrix(size_t N) {
+    Matrix<double> result(N, N, 0);
 
     for (size_t i = 0; i < N; ++i) {
         for (size_t j = 0; j < N; ++j) {
@@ -18,10 +18,10 @@ Matrix DCT::getDctMatrix(size_t N) {
     return result;
 }
 
-Matrix DCT::applyDiscreteCosineTransform(const Matrix &matrix, size_t size_of_block) {
-    Matrix result(matrix.getRowSize(), matrix.getColumnSize());
-    Matrix DCT_matrix = getDctMatrix(size_of_block);
-    Matrix DCT_matrix_transposed = DCT_matrix.transposed();
+Matrix<double> DCT::applyDiscreteCosineTransform(const Matrix<double> &matrix, size_t size_of_block) {
+    Matrix<double> result(matrix.getRowSize(), matrix.getColumnSize());
+    Matrix<double> DCT_matrix = getDctMatrix(size_of_block);
+    Matrix<double> DCT_matrix_transposed = DCT_matrix.transposed();
     size_t blocks_in_column = matrix.getColumnSize() / size_of_block + (matrix.getColumnSize() % size_of_block != 0);
     size_t blocks_in_row = matrix.getRowSize() / size_of_block + (matrix.getRowSize() % size_of_block != 0);
     for (size_t i = 0; i < blocks_in_column; ++i) {

@@ -6,7 +6,7 @@
 
 class DCT {
 public:
-    static Matrix getDctMatrix(size_t N);
+    static Matrix<double> getDctMatrix(size_t N);
 
-    static Matrix applyDiscreteCosineTransform(const Matrix &matrix, size_t size_of_block);
+    static Matrix<double> applyDiscreteCosineTransform(const Matrix<double> &matrix, size_t size_of_block);
 };

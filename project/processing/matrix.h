@@ -7,18 +7,20 @@
 #include <vector>
 #include <tuple>
 #include <cmath>
+#include <iomanip>
 
+template<typename T>
 class Matrix {
 private:
     size_t row_size_;
     size_t column_size_;
-    std::vector<std::vector<double> > matrix_;
+    std::vector<std::vector<T>> matrix_;
 public:
-    Matrix(size_t row_size, size_t column_size, double initial_value = 0);
+    Matrix(size_t row_size, size_t column_size, T initial_value = T());
 
     Matrix(const Matrix &matrix);
 
-    explicit Matrix(const std::vector<std::vector<double> > &vector_matrix);
+    explicit Matrix(const std::vector<std::vector<T>> &vector_matrix);
 
     Matrix(Matrix &&matrix) noexcept;
 
@@ -43,9 +45,9 @@ public:
 
     [[nodiscard]] Matrix divideByElement(const Matrix &matrix) const;
 
-    Matrix &resize(size_t new_row_size, size_t new_column_size, double padding_value = 0);
+    Matrix &resize(size_t new_row_size, size_t new_column_size, T padding_value = T());
 
-    [[nodiscard]] Matrix resized(size_t new_row_size, size_t new_column_size, double padding_value = 0) const;
+    [[nodiscard]] Matrix resized(size_t new_row_size, size_t new_column_size, T padding_value = T()) const;
 
     [[nodiscard]] Matrix
     getSlice(std::pair<size_t, size_t> upper_left_point, std::pair<size_t, size_t> lower_right_point) const;
@@ -54,21 +56,21 @@ public:
 
     [[nodiscard]] Matrix flatten() const;
 
-    [[nodiscard]] std::vector<double> flattenVector() const;
+    [[nodiscard]] std::vector<T> flattenVector() const;
 
     // Scalar Operations
-    Matrix operator+(double number);
+    Matrix operator+(T number);
 
-    Matrix operator-(double number);
+    Matrix operator-(T number);
 
-    Matrix operator*(double number);
+    Matrix operator*(T number);
 
-    Matrix operator/(double number);
+    Matrix operator/(T number);
 
     // Aesthetic Methods
-    double &operator()(const size_t &row_index, const size_t &column_index);
+    T &operator()(const size_t &row_index, const size_t &column_index);
 
-    const double &operator()(const size_t &row_index, const size_t &column_index) const;
+    const T &operator()(const size_t &row_index, const size_t &column_index) const;
 
     void print(int precision = 6) const;
 
@@ -77,3 +79,4 @@ public:
     [[nodiscard]] size_t getColumnSize() const;
 };
 
+#include "matrix.tpp"
