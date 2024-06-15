@@ -54,7 +54,7 @@ public:
 
     [[nodiscard]] Matrix flatten() const;
 
-    [[nodiscard]] std::vector<double> flatten_vector() const;
+    [[nodiscard]] std::vector<double> flattenVector() const;
 
     // Scalar Operations
     Matrix operator+(double number);

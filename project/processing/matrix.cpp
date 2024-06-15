@@ -197,7 +197,7 @@ Matrix Matrix::flatten() const {
     return result;
 }
 
-std::vector<double> Matrix::flatten_vector() const {
+std::vector<double> Matrix::flattenVector() const {
     std::vector<double> result;
     for (size_t i = 0; i < column_size_; ++i) {
         for (size_t j = 0; j < row_size_; ++j) {
