@@ -11,4 +11,6 @@ add_executable(project
         processing/subsample.cpp
         processing/matrix.tpp
         processing/discrete_cosine_transform.cpp
-        processing/quantization.cpp)
+        processing/quantization.cpp
+        processing/entropy_encoding.cpp
+        processing/huffman_encoder.cpp)

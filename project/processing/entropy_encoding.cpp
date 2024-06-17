@@ -1,9 +1,9 @@
 #include "entropy_encoding.h"
 
 // Block 8x8 -> {AC, DC} from zigzag
-std::pair<int, std::vector<int>> zig_zag(Matrix<int> &block) {
+std::pair<int, std::vector<int>> Entropy::zig_zag(Matrix<int> &block) {
     std::vector<int> sequence;
-    bool direction_up = false;
+    bool direction_up = true;
     for (int diag = 1; diag < 15; ++diag) {
         for (int i = 0; i <= diag; ++i) {
             int j = diag - i;
@@ -21,8 +21,9 @@ std::pair<int, std::vector<int>> zig_zag(Matrix<int> &block) {
     return std::make_pair(block(0, 0), sequence);
 }
 
-uint8_t bitsize(int n) {
+uint8_t Entropy::bitsize(int n) {
     uint8_t size = 0;
+    n = abs(n);
     while (n) {
         ++size;
         n >>= 1;
@@ -31,17 +32,17 @@ uint8_t bitsize(int n) {
 }
 
 // current sequence of one block -> RLE encoded with (0, 0) at the end. Don't forget that 15 nulls is maximum.
-std::vector <current> RLE(std::vector<int> &sequence) {
+std::vector<current> Entropy::RLE(std::vector<int> &sequence) {
     std::vector <current> encoded_sequence;
     uint8_t null_count = 0;
     for (auto k: sequence) {
         if (k == 0) {
             ++null_count;
-            if (null_count == 15) {
-                encoded_sequence.push_back({15, 0, 0, 0});
-                null_count = 0;
-            }
         } else {
+            while (null_count >= 15) {
+                encoded_sequence.push_back({15, 0, 0, 0});
+                null_count -= 15;
+            }
             encoded_sequence.push_back({null_count, bitsize(k), 0, k});
             null_count = 0;
         }
@@ -50,15 +51,8 @@ std::vector <current> RLE(std::vector<int> &sequence) {
     return encoded_sequence;
 }
 
-typedef struct {
-    std::vector<current> DC_sequence;
-    std::vector<std::vector<current>> AC_sequence;
-    HuffmanTable DC_table;
-    HuffmanTable AC_table;
-} EncodedMatrix;
-
 // Full matrix (Y/Cr/Cb) -> vector<int> DiffDC and vector<int> RLE(current) for each block
-EncodedMatrix encode_matrix(Matrix<int> &M) {
+EncodedMatrix Entropy::encode_matrix(Matrix<int> &M) {
     EncodedMatrix encodedMatrix;
     int prevDC = 0;
     size_t n = M.getColumnSize();
@@ -76,17 +70,24 @@ EncodedMatrix encode_matrix(Matrix<int> &M) {
     }
 
     std::vector<current> flattened_AC; // хахах сори за такие приколы
-    for (const auto& ac_block : encodedMatrix.AC_sequence) {
+    for (auto &ac_block : encodedMatrix.AC_sequence) {
         for (auto AC : ac_block) {
-            flattened_AC.emplace_back(AC);
+            flattened_AC.push_back(AC);
         }
     }
-    encodedMatrix.AC_table = huffman_encoder(flattened_AC);
-    encodedMatrix.DC_table = huffman_encoder(encodedMatrix.DC_sequence);
+    encodedMatrix.AC_table = Huffman::huffman_encoder(flattened_AC);
+    int i = 0;
+    for (auto &ac_block : encodedMatrix.AC_sequence) {
+        for (auto &AC : ac_block) {
+            AC.ENC_RLS = flattened_AC[i].ENC_RLS;
+            ++i;
+        }
+    }
+    encodedMatrix.DC_table = Huffman::huffman_encoder(encodedMatrix.DC_sequence);
     return encodedMatrix;
 }
 
-void entropy_encoder(Matrix<int> &Y, Matrix<int> &Cb, Matrix<int> &Cr){
+void Entropy::entropy_encoder(Matrix<int> &Y, Matrix<int> &Cb, Matrix<int> &Cr) {
     auto EncY = encode_matrix(Y);
     auto EncCb = encode_matrix(Cb);
     auto EncCr = encode_matrix(Cr);

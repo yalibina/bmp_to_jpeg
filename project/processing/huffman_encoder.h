@@ -1,5 +1,4 @@
-#ifndef BMP_TO_JPEG_HUFFMAN_ENCODER_H
-#define BMP_TO_JPEG_HUFFMAN_ENCODER_H
+#pragma once
 
 #include <algorithm>
 #include <vector>
@@ -21,10 +20,37 @@ typedef struct {
 } current; // DC is kept here too (for universal usage in Huffman). In that case RL = 0;
 
 struct HuffmanTable {
-    byte codelengths[17] = { 0 };
-    byte symbols[176] = { 0 };
+    byte codelengths[17] = {0};
+    byte symbols[176] = {0};
 };
 
-HuffmanTable huffman_encoder(std::vector<current> &sequence);
+// Node structure for Huffman Tree
+struct Node {
+    std::pair<uint8_t, uint8_t> data;
+    int freq;
+    Node *left, *right;
 
-#endif //BMP_TO_JPEG_HUFFMAN_ENCODER_H
+    Node(std::pair<uint8_t, uint8_t> data, int freq);
+};
+
+// Comparator for priority queue
+struct compare {
+    bool operator()(Node *l, Node *r);
+};
+
+
+class Huffman {
+public:
+    static HuffmanTable huffman_encoder(std::vector<current> &sequence);
+
+private:
+    static Node *buildHuffmanTree(std::map<std::pair<uint8_t, uint8_t>, int> &frequency);
+
+    static void count_codelengths(Node *v, byte (&codelengths)[17], byte depth = -1, bool onlyones = true);
+
+    static uint to_byte(std::pair<uint8_t, uint8_t> p);
+
+    static std::map<std::pair<uint8_t, uint8_t>, byte>
+    fill_htable(HuffmanTable &htable, std::vector<std::pair<int, std::pair<uint8_t, uint8_t>>> &sorted_symbols);
+};
+

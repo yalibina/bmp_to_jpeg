@@ -1,27 +1,18 @@
 #include "huffman_encoder.h"
 
-// Node structure for Huffman Tree
-struct Node {
-    std::pair<uint8_t, uint8_t> data;
-    int freq;
-    Node *left, *right;
 
-    Node(std::pair<uint8_t, uint8_t> data, int freq) {
-        left = right = nullptr;
-        this->data = data;
-        this->freq = freq;
-    }
-};
+Node::Node(std::pair<uint8_t, uint8_t> data, int freq) {
+    left = right = nullptr;
+    this->data = data;
+    this->freq = freq;
+}
 
-// Comparator for priority queue
-struct compare {
-    bool operator()(Node *l, Node *r) {
-        return (l->freq > r->freq);
-    }
-};
+bool compare::operator()(Node *l, Node *r) {
+    return (l->freq > r->freq);
+}
 
 // Function to build Huffman Tree and generate Huffman codes
-Node* buildHuffmanTree(std::map<std::pair<uint8_t, uint8_t>, int> &frequency) {
+Node* Huffman::buildHuffmanTree(std::map<std::pair<uint8_t, uint8_t>, int> &frequency) {
     Node *left, *right, *top;
     std::priority_queue<Node *, std::vector<Node *>, compare> minHeap;
 
@@ -45,7 +36,7 @@ Node* buildHuffmanTree(std::map<std::pair<uint8_t, uint8_t>, int> &frequency) {
     return root;
 }
 
-void count_codelengths(Node* v, byte (&codelengths)[17], byte depth = 1, bool onlyones = true) {
+void Huffman::count_codelengths(Node* v, byte (&codelengths)[17], byte depth, bool onlyones) {
     if (!v->left && !v->right) {
         ++codelengths[depth + onlyones];
     } else {
@@ -54,12 +45,12 @@ void count_codelengths(Node* v, byte (&codelengths)[17], byte depth = 1, bool on
     }
 }
 
-uint to_byte(std::pair<uint8_t, uint8_t> p) {
+uint Huffman::to_byte(std::pair<uint8_t, uint8_t> p) {
     uint res = (p.first << 4) + p.second;
     return res;
 }
 
-std::map<std::pair<uint8_t, uint8_t>, byte> fill_htable(HuffmanTable &htable, std::vector<std::pair<int, std::pair<uint8_t, uint8_t>>> &sorted_symbols) {
+std::map<std::pair<uint8_t, uint8_t>, byte> Huffman::fill_htable(HuffmanTable &htable, std::vector<std::pair<int, std::pair<uint8_t, uint8_t>>> &sorted_symbols) {
     uint code = 0;
     uint offset = 0;
     std::map<std::pair<uint8_t, uint8_t>, byte> symbol_to_code;
@@ -76,7 +67,7 @@ std::map<std::pair<uint8_t, uint8_t>, byte> fill_htable(HuffmanTable &htable, st
 }
 
 // Input: sequence of currents; output: huffman table; function updates enc_rls in currents;
-HuffmanTable huffman_encoder(std::vector<current> &sequence) {
+HuffmanTable Huffman::huffman_encoder(std::vector<current> &sequence) {
     std::map<std::pair<uint8_t, uint8_t>, int> frequency;
 
     HuffmanTable htable; // the answer huf table is here
@@ -101,10 +92,9 @@ HuffmanTable huffman_encoder(std::vector<current> &sequence) {
 
     auto symbol_to_code = fill_htable(htable, sorted_symbols);
 
-    std::vector<byte> encoded_sequence(sequence.size());
-    for (auto c : sequence) {
+    // std::vector<byte> encoded_sequence(sequence.size());
+    for (auto &c : sequence) {
         c.ENC_RLS = symbol_to_code[{c.RUNLENGTH, c.SIZE}];
     }
     return htable;
 }
-
