@@ -16,6 +16,7 @@ private:
     size_t column_size_;
     std::vector<std::vector<T>> matrix_;
 public:
+    Matrix() = default;
     Matrix(size_t row_size, size_t column_size, T initial_value = T());
 
     Matrix(const Matrix &matrix);

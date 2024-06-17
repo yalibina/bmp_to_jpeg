@@ -1,7 +1,9 @@
+#pragma once
 #include <vector>
 #include <fstream>
 
 #include "pixel.h"
+#include "../processing/matrix.h"
 
 struct BMPFileHeader {
     uint16_t bf_type;
@@ -43,6 +45,9 @@ public:
     const uint16_t GetFileType() const;
     const int GetOrder() const;
     std::vector<std::vector<Pixel>> GetPixelMatrix() const;
+    Matrix<double> GetYMatrix();
+    Matrix<double> GetCbMatrix();
+    Matrix<double> GetCrMatrix();
 
     void SetImageSize(uint32_t width, uint32_t height);
     void UpdateImageHeightInfo();
@@ -54,9 +59,9 @@ protected:
     int order_ = 1;
 
     std::vector<std::vector<Pixel>> pixel_matrix_;
-    std::vector<std::vector<double>> Y_matrix_;
-    std::vector<std::vector<double>> Cb_matrix_;
-    std::vector<std::vector<double>> Cr_matrix_;
+    Matrix<double> Y_matrix_;
+    Matrix<double> Cb_matrix_;
+    Matrix<double> Cr_matrix_;
 
     BMPFileHeader bmp_file_header_;
     BMPInfoHeader bmp_info_header_;

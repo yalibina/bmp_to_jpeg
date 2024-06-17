@@ -5,10 +5,11 @@
 
 class Quant {
 public:
-    static Matrix<int> applyQuantization(const Matrix<double> &matrix, size_t size_of_block, double q);
+    static Matrix<int> applyQuantization(const Matrix<double> &matrix, size_t size_of_block, int q);
+    static Matrix<int> getQMatrix(size_t N, int q);
 
 private:
-    static Matrix<int> getQMatrix(size_t N, double q);
+
 
 };
 

@@ -1,10 +1,7 @@
 #include "subsample.h"
 
 void Subsample::chroma_subsample(Image &image) {
-    for (uint32_t row = 0; row < image.GetImageHeight(); ++row) {
-        if (row % 2 != 0) {
-            continue;
-        }
+    for (uint32_t row = 0; row < image.GetImageHeight(); row += 2) {
         for (uint32_t col = 0; col < image.GetImageWidth(); col += 2) {
             double sum_cb = 0;
             double sum_cr = 0;

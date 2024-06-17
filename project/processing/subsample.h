@@ -4,6 +4,6 @@
 
 class Subsample {
 public:
-    void chroma_subsample(Image& image);
+    static void chroma_subsample(Image& image);
 };
 

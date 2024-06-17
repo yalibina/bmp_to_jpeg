@@ -1,6 +1,6 @@
 #include "quantization.h"
 
-Matrix<int> Quant::getQMatrix(size_t N, double q) {
+Matrix<int> Quant::getQMatrix(size_t N, int q) {
     Matrix<int> Q(N, N, 0);
     Matrix<int> Q_base({{16, 11, 10, 16, 24, 40, 51, 61},
                            {12, 12, 14, 19, 26, 58, 60, 55},
@@ -28,7 +28,7 @@ Matrix<int> Quant::getQMatrix(size_t N, double q) {
     return Q;
 }
 
-Matrix<int> Quant::applyQuantization(const Matrix<double> &matrix, size_t size_of_block, double q) {
+Matrix<int> Quant::applyQuantization(const Matrix<double> &matrix, size_t size_of_block, int q) {
     Matrix<int> result(matrix.getRowSize(), matrix.getColumnSize());
     Matrix<int> Q = getQMatrix(size_of_block, q);
 
@@ -43,7 +43,7 @@ Matrix<int> Quant::applyQuantization(const Matrix<double> &matrix, size_t size_o
             Matrix<int> res_block(Q.getRowSize(), Q.getColumnSize());
             for (size_t n = 0; n < Q.getColumnSize(); ++n) {
                 for (size_t m = 0; m < Q.getRowSize(); ++m) {
-                    res_block(i, j) = static_cast<int>(std::round(block(n, m)/ Q(n, m)));
+                    res_block(n, m) = static_cast<int>(std::round(block(n, m) / Q(n, m)));
                 }
             }
             result.insert({i * size_of_block, j * size_of_block}, res_block);
